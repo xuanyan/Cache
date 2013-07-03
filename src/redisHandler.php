@@ -7,64 +7,70 @@
 
 class redisHandler extends cacheHandler
 {
-	private $config = NULL;
-	private $client = NULL;
-	function __construct($config = NULL)
-	{
-		$this->config = array(
-		    'host'     => 'geek-zoo.com',
-		    'port'     => 6379,
-		    'database' => 15
-		);
-		$this->client = new Predis\Client($this->config);
-	}
-	
+    private $config = NULL;
+    private $client = NULL;
+
+    function __construct($config = NULL)
+    {
+        $this->client = new Predis\Client($config);
+    }
+
     public function delete($key)
     {
-        if ($this->ns) {
-			$this->client->hdel($this->ns, $key);
-		} else {
-			$this->client->del($key);
-		}
-		return true;
+        if (!$this->ns) {
+            $this->client->del($key);
+            return true;
+        }
+
+        if (!$key) {
+            $this->client->del($this->ns);
+        } else {
+            $this->client->hdel($this->ns, $key);
+        }
+
+        return true;
     }
 
     public function get($key)
     {
-        if ($this->ns) {
-			$data = $this->client->hget($this->ns, $key);
-		} else {
-			$data = $this->client->get($key);
-		}
-		
-		$data = json_decode($data, true);
-		if (empty($data['data'])) {
-			return '';
-		} else {
-			if ($this->ns) {
-				if (intval($data['expire']) < time()) {
-					$this->client->hdel($this->ns, $key);
-					return '';
-				}	
-			}
-			return $data['data'];
-		}
 
+        if (!$this->ns) {
+            return $this->client->get($key);
+        }
+
+        $data = $this->client->hget($this->ns, $key);
+
+        $data = json_decode($data, true);
+
+        if (!isset($data['data'])) {
+            return false;
+        }
+
+        if (intval($data['expire']) < time()) {
+            $this->client->hdel($this->ns, $key);
+            return false;
+        }
+
+
+        return $data['data'];
     }
 
     public function set($key, $value, $expire = 3600)
     {
-		$value = array('data'=>$value, 'expire'=>time()+intval($expire));
-		$value = json_encode($value);
-        if ($this->ns) {
-			$this->client->hset($this->ns, $key, $value);
-		} else {
-			$this->client->set($key, $value);
-			if (!empty($expire)) {
-				$this->client->expire($key, $expire);
-			}
-		}
-		return true;
+        if (!$this->ns) {
+            $this->client->set($key, $value);
+            if (!empty($expire)) {
+                $this->client->expire($key, $expire);
+            }
+            return true;
+        }
+
+        $value = array('data'=>$value, 'expire'=>time()+intval($expire));
+        $value = json_encode($value);
+
+        $this->client->hset($this->ns, $key, $value);
+
+        return true;
     }
 }
 

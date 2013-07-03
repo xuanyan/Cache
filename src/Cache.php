@@ -15,11 +15,12 @@ class Cache
     private $ns = '';
     private $lastKey = '';
 
-    function __construct($path = null)
+    function __construct($type = null, $config = null)
     {
-        if ($path) {
-            require_once dirname(__FILE__).'/fileHandler.php';
-            $this->cacheHandler = new fileHandler($path);
+        if ($type) {
+            $class = "{$type}Handler";
+            $file = require_once dirname(__FILE__)."/{$class}.php";
+            $this->cacheHandler = new $class($config);
         }
     }
 
