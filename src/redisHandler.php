@@ -22,7 +22,7 @@ class redisHandler extends cacheHandler
     public function delete($key)
     {
         if ($this->ns) {
-			$this->client->del($this->ns);
+			$this->client->hdel($this->ns, $key);
 		} else {
 			$this->client->del($key);
 		}
@@ -32,14 +32,25 @@ class redisHandler extends cacheHandler
     public function get($key)
     {
         if ($this->ns) {
-			$this->client->hget($this->ns, $key);
+			$data = $this->client->hget($this->ns, $key);
 		} else {
-			$this->client->get($key);
+			$data = $this->client->get($key);
+		}
+		$data = json_decode($data);
+		if (empty($data['data'])) {
+			return '';
+		} else {
+			if (intval($data['expire']) < time()) {
+				return '';
+			}
+			return $data['data'];
 		}
     }
 
-    public function set($key, $value, $expire)
+    public function set($key, $value, $expire = 3600)
     {
+		$value = array('data'=>$value, 'expire'=>time()+intval($expire));
+		$value = json_encode($value);
         if ($this->ns) {
 			$this->client->hset($this->ns, $key, $value);
 		} else {
@@ -48,6 +59,7 @@ class redisHandler extends cacheHandler
 				$this->client->expire($key, $expire);
 			}
 		}
+		return true;
     }
 }
 
