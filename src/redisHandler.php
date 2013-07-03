@@ -33,24 +33,21 @@ class redisHandler extends cacheHandler
     {
         if ($this->ns) {
 			$data = $this->client->hget($this->ns, $key);
-			$data = json_decode($data);
-			if (empty($data['data'])) {
-				return '';
-			} else {
+		} else {
+			$data = $this->client->get($key);
+		}
+		
+		$data = json_decode($data);
+		if (empty($data['data'])) {
+			return '';
+		} else {
+			if ($this->ns) {
 				if (intval($data['expire']) < time()) {
 					$this->client->hdel($this->ns, $key);
 					return '';
-				}
-				return $data['data'];
+				}	
 			}
-		} else {
-			$data = $this->client->get($key);
-			$data = json_decode($data);
-			if (empty($data['data'])) {
-				return '';
-			} else {
-				return $data['data'];
-			}
+			return $data['data'];
 		}
 
     }
