@@ -37,7 +37,7 @@ class redisHandler extends cacheHandler
 			$data = $this->client->get($key);
 		}
 		
-		$data = json_decode($data);
+		$data = json_decode($data, true);
 		if (empty($data['data'])) {
 			return '';
 		} else {

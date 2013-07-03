@@ -52,7 +52,7 @@ class Cache
         return $result;
     }
 
-    public function set($key, $value = aray(), $expire = 3600)
+    public function set($key, $value = array(), $expire = 3600)
     {
         $this->cacheHandler->set($key, $value, $expire);
         $this->cacheHandler->ns = null;
