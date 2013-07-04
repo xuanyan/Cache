@@ -7,9 +7,8 @@ class PredisTest extends PHPUnit_Framework_TestCase
     function setUp()
     {
         $this->c = new Cache('Predis', array(
-            'host'     => 'geek-zoo.com',
-            'port'     => 6379,
-            'database' => 12
+            'host'     => 'localhost',
+            'port'     => 6379
         ));
     }
 
