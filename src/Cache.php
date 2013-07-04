@@ -15,6 +15,8 @@ class Cache
     private $ns = '';
     private $lastKey = '';
 
+    public $expire = 3600;
+
     function __construct($type = null, $config = null)
     {
         if ($type) {
@@ -44,17 +46,27 @@ class Cache
         return true;
     }
 
-    public function get($key)
+    public function get($key, $callBack = null)
     {
         $result = $this->cacheHandler->get($key);
+
+        if ($result === false && is_callable($callBack)) {
+            $result = call_user_func($callBack, $key, $this->cacheHandler->ns);
+            if ($result !== false) {
+                $this->cacheHandler->set($key, $result, $this->expire);
+            }
+        }
 
         $this->cacheHandler->ns = null;
 
         return $result;
     }
 
-    public function set($key, $value = array(), $expire = 3600)
+    public function set($key, $value = array(), $expire = null)
     {
+        if ($expire === null) {
+            $expire = $this->expire;
+        }
         $this->cacheHandler->set($key, $value, $expire);
         $this->cacheHandler->ns = null;
 

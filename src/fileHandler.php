@@ -83,7 +83,6 @@ EOT;
             } else {
                 $filename = $this->path.'/'.md5($this->ns).'/'.md5($key).'.php';
             }
-            $this->ns = '';
         } else {
             $filename = $this->path.'/'.md5($key).'.php';
         }
@@ -95,7 +94,6 @@ EOT;
     {
         if ($this->ns) {
             $filename = $this->path.'/'.md5($this->ns).'/'.md5($key).'.php';
-            $this->ns = '';
         } else {
             $filename = $this->path.'/'.md5($key).'.php';
         }
@@ -107,7 +105,6 @@ EOT;
     {
         if ($this->ns) {
             $filename = $this->path.'/'.md5($this->ns).'/'.md5($key).'.php';
-            $this->ns = '';
         } else {
             $filename = $this->path.'/'.md5($key).'.php';
         }

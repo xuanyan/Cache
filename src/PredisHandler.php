@@ -30,7 +30,9 @@ class PredisHandler extends cacheHandler
     public function get($key)
     {
         if (!$this->ns) {
+
             $result = $this->client->get($key);
+            $result === null && $result = false;
 
             return $result === false ? false : json_decode($result, true);
         }
