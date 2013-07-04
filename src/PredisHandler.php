@@ -5,9 +5,8 @@
 */
 
 
-class redisHandler extends cacheHandler
+class PredisHandler extends cacheHandler
 {
-    private $config = NULL;
     private $client = NULL;
 
     function __construct($config = NULL)
@@ -18,17 +17,14 @@ class redisHandler extends cacheHandler
     public function delete($key)
     {
         if (!$this->ns) {
-            $this->client->del($key);
-            return true;
+            return $this->client->del($key);
         }
 
         if (!$key) {
-            $this->client->del($this->ns);
-        } else {
-            $this->client->hdel($this->ns, $key);
+            return $this->client->del($this->ns);
         }
 
-        return true;
+        return $this->client->hdel($this->ns, $key);
     }
 
     public function get($key)
@@ -68,9 +64,7 @@ class redisHandler extends cacheHandler
         $value = array('data'=>$value, 'expire'=>time()+intval($expire));
         $value = json_encode($value);
 
-        $this->client->hset($this->ns, $key, $value);
-
-        return true;
+        return $this->client->hset($this->ns, $key, $value);
     }
 }
 
