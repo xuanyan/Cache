@@ -12,13 +12,10 @@
 class fileHandler extends cacheHandler
 {
     private $path = null;
-    private $now = 0;
 
     function __construct($path)
     {
         $this->path = $path;
-
-        $this->now = time();
     }
 
     private function readFile($filename)
@@ -29,7 +26,7 @@ class fileHandler extends cacheHandler
 
         $data = require $filename;
 
-        if ($data['timeout'] < $this->now) {
+        if ($data['timeout'] < time()) {
             return false;
         }
 
@@ -44,7 +41,7 @@ class fileHandler extends cacheHandler
         }
         
         $data = array(
-            'timeout' => $this->now+$expire,
+            'timeout' => time()+$expire,
             'data' => $data
         );
 

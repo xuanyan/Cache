@@ -29,9 +29,10 @@ class PredisHandler extends cacheHandler
 
     public function get($key)
     {
-
         if (!$this->ns) {
-            return $this->client->get($key);
+            $result = $this->client->get($key);
+
+            return $result === false ? false : json_decode($result, true);
         }
 
         $data = $this->client->hget($this->ns, $key);
@@ -54,6 +55,7 @@ class PredisHandler extends cacheHandler
     public function set($key, $value, $expire = 3600)
     {
         if (!$this->ns) {
+            $value = json_encode($value);
             $this->client->set($key, $value);
             if (!empty($expire)) {
                 $this->client->expire($key, $expire);

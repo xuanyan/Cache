@@ -57,9 +57,10 @@ class Cache
     {
         $this->cacheHandler->set($key, $value, $expire);
         $this->cacheHandler->ns = null;
+
+        return true;
     }
 }
-
 
 abstract class cacheHandler
 {
