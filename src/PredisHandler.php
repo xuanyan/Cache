@@ -58,10 +58,8 @@ class PredisHandler extends cacheHandler
     {
         if (!$this->ns) {
             $value = json_encode($value);
-            $this->client->set($key, $value);
-            if (!empty($expire)) {
-                $this->client->expire($key, $expire);
-            }
+            $this->client->setex($key, $expire, $value);
+
             return true;
         }
 
