@@ -2,7 +2,7 @@
     <testsuites>
       <testsuite name="My Test Suite">
         <directory suffix="Test.php" phpVersion="5.3.0" phpVersionOperator=">=">tests</directory>
-        <file phpVersion="5.3.0" phpVersionOperator="<">tests/fileTest.php</file>
+        <file phpVersion="5.3.0" phpVersionOperator="lt">tests/fileTest.php</file>
       </testsuite>
     </testsuites>
     <!-- <logging> -->
