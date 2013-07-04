@@ -2,6 +2,11 @@
 /**
  * @requires PHP 5.3
  */
+
+require __DIR__.'/Predis/Autoloader.php';
+
+Predis\Autoloader::register();
+
 class PredisTest extends PHPUnit_Framework_TestCase
 {
     function setUp()

@@ -2,10 +2,6 @@
 
 require dirname(__DIR__).'/src/Cache.php';
 
-require __DIR__.'/Predis/Autoloader.php';
-
-Predis\Autoloader::register();
-
 function MyDelete($dir)
 {
     if (!file_exists($dir)) {
